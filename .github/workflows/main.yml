@@ -1,34 +1,27 @@
-name: CI Stages Practice
+name: Artifacts Practice
 
 on:
   push:
     branches: [ main ]
 
 jobs:
-  # Стадия сборки
-  build:
+  build-and-archive:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Compile Application
+      - name: Create Build Asset
         run: |
-          echo "Compiling the code..."
-          mkdir -p build/
-          echo "Success" > build/app.bin
+          mkdir -p dist
+          cp index.html dist/index.html
+          echo "Build date: $(date)" > dist/build_info.txt
 
-  # Стадия тестирования
-  test:
-    runs-on: ubuntu-latest
-    needs: build # Ждем завершения сборки!
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Run Unit Tests
-        run: |
-          echo "Running tests..."
-          exit 0 # 0 — успех, 1 — провал. Попробуй поменять на 1, чтобы увидеть ошибку.
-
+      # ШАГ ПРАКТИКИ: Сохранение артефакта
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-package # Название архива
+          path: dist/        # Какую папку сохранить
+          retention-days: 5  # Сколько дней хранить (необязательно)
 
