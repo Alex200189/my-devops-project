@@ -1,23 +1,34 @@
-name: My First Pipeline
+name: CI Stages Practice
 
-# ТЕСТ: Запуск при push в ветку main
 on:
   push:
     branches: [ main ]
 
 jobs:
-  build-and-test:
-    runs-on: ubuntu-latest # Используем чистую Ubuntu от GitHub
-
+  # Стадия сборки
+  build:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4 # Шаг 1: Копируем код из репозитория на сервер
+        uses: actions/checkout@v4
 
-      - name: Run Build
-        run: echo "Building the project..." # Шаг 2: Имитация сборки
-
-      - name: Run Tests
+      - name: Compile Application
         run: |
-          echo "Running unit tests..."
-          echo "All tests passed!" # Шаг 3: Имитация тестов
+          echo "Compiling the code..."
+          mkdir -p build/
+          echo "Success" > build/app.bin
+
+  # Стадия тестирования
+  test:
+    runs-on: ubuntu-latest
+    needs: build # Ждем завершения сборки!
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Unit Tests
+        run: |
+          echo "Running tests..."
+          exit 0 # 0 — успех, 1 — провал. Попробуй поменять на 1, чтобы увидеть ошибку.
+
 
